@@ -21,6 +21,7 @@ public class StarterApplication extends Application {
                 .server("http://13.53.134.251:80/parse")
                 .build()
         );
+        ParseUser.logOut();
         ParseObject object = new ParseObject("ExampleObject");
         object.put("myNumber", "123");
         object.put("myString", "rob");
@@ -34,7 +35,7 @@ public class StarterApplication extends Application {
                 }
             }
         });
-        ParseUser.enableAutomaticUser();
+        //ParseUser.enableAutomaticUser();
         ParseACL defaultACL = new ParseACL();
         defaultACL.setPublicReadAccess(true);
         defaultACL.setPublicWriteAccess(true);
