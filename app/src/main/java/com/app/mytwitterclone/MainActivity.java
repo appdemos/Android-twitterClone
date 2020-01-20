@@ -2,6 +2,7 @@ package com.app.mytwitterclone;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -28,6 +29,13 @@ public class MainActivity extends AppCompatActivity {
         ParseAnalytics.trackAppOpenedInBackground(getIntent());
     }
 
+    public void redirectUser(){
+        if(ParseUser.getCurrentUser() != null){
+            Intent intent = new Intent(getApplicationContext(), Users.class);
+            startActivity(intent);
+        }
+    }
+
     public void signUpLogin(View v) {
         final EditText username = findViewById(R.id.usernameEditText);
         final EditText password = findViewById(R.id.passwordEditText);
@@ -36,7 +44,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void done(ParseUser user, ParseException e) {
                 if(e == null && user != null){
-                    Toast.makeText(MainActivity.this, "Login ok", Toast.LENGTH_SHORT).show();
+                    redirectUser();
                 }else{
                     ParseUser newUser = new ParseUser();
                     newUser.setUsername(username.getText().toString());
@@ -45,7 +53,7 @@ public class MainActivity extends AppCompatActivity {
                         @Override
                         public void done(ParseException e) {
                             if(e == null){
-                                Toast.makeText(MainActivity.this, "Sign up success", Toast.LENGTH_SHORT).show();
+                                redirectUser();
                             }else{
                                 Toast.makeText(MainActivity.this, e.getMessage().substring(e.getMessage().indexOf(" ")) + " Sign up failed!", Toast.LENGTH_SHORT).show();
                             }
