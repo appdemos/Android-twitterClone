@@ -11,7 +11,13 @@ import android.widget.CheckedTextView;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.parse.FindCallback;
+import com.parse.ParseException;
+import com.parse.ParseQuery;
+import com.parse.ParseUser;
+
 import java.util.ArrayList;
+import java.util.List;
 
 public class Users extends AppCompatActivity {
 
@@ -23,7 +29,7 @@ public class Users extends AppCompatActivity {
         setContentView(R.layout.activity_users);
         setTitle("User List");
 
-        ListView listView = findViewById(R.id.listView);
+        final ListView listView = findViewById(R.id.listView);
         listView.setChoiceMode(AbsListView.CHOICE_MODE_MULTIPLE);
 
         adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_checked, users);
@@ -33,13 +39,34 @@ public class Users extends AppCompatActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 CheckedTextView checkedTextView = (CheckedTextView)view;
                 if(checkedTextView.isChecked()){
-                    Toast.makeText(Users.this, "checked", Toast.LENGTH_SHORT).show();
+                    ParseUser.getCurrentUser().add("isFollowing", users.get(position));
                 }else{
-                    Toast.makeText(Users.this, "not checked", Toast.LENGTH_SHORT).show();
+                    ParseUser.getCurrentUser().getList("isFollowing").remove(users.get(position));
+                    List tempUsers = ParseUser.getCurrentUser().getList("isFollowing");
+                    ParseUser.getCurrentUser().remove("isFollowing");
+                    ParseUser.getCurrentUser().put("isFollowing", tempUsers);
+                }
+                ParseUser.getCurrentUser().saveInBackground();
+            }
+        });
+        ParseQuery<ParseUser> query = ParseUser.getQuery();
+        query.whereNotEqualTo("username", ParseUser.getCurrentUser().getUsername());
+        query.findInBackground(new FindCallback<ParseUser>() {
+            @Override
+            public void done(List<ParseUser> objects, ParseException e) {
+                if(e == null && objects.size() > 0){
+                    for (ParseUser user:objects) {
+                        users.add(user.getUsername());
+                    }
+                    adapter.notifyDataSetChanged();
+                    for (String username:users) {
+                        if(ParseUser.getCurrentUser().getList("isFollowing").contains(username)){
+                            listView.setItemChecked(users.indexOf(username), true);
+                        }
+                    }
                 }
             }
         });
-
 
 
 
