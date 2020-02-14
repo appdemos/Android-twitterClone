@@ -13,7 +13,6 @@ public class StarterApplication extends Application {
         super.onCreate();
 // Enable Local Datastore.
         Parse.enableLocalDatastore(this);
-        /* user + Wr9i3FhhGD8a*/
 // Add your initialization code here
         Parse.initialize(new Parse.Configuration.Builder(getApplicationContext())
                 .applicationId("119663f0006fa16fdd529ecc179fab19a990b2b4")
